@@ -66,7 +66,7 @@ abstract class ApiException extends IdException implements Jsonable, \JsonSerial
     {
         $e = $this;
 
-        if (env('APP_DEBUG') && $e instanceof ShowsPrevious && $this->getPrevious() !== null) {
+        if ($e instanceof ShowsPrevious && $this->getPrevious() !== null) {
             $e = $this->getPrevious();
         }
 
@@ -74,15 +74,20 @@ abstract class ApiException extends IdException implements Jsonable, \JsonSerial
         $return['id'] = $e instanceof IdException ? $e->getId() : Str::snake(class_basename($e));
         $return['message'] = $e->getMessage();
 
-        if ($e instanceof ApiException) {
-            $meta = $this->getMeta();
-            if (! empty($meta)) {
-                $return['meta'] = $meta;
+
+        if (env('ShowExceptionMeta', false)) {
+            if ($e instanceof ApiException) {
+                $meta = $this->getMeta();
+                if (!empty($meta)) {
+                    $return['meta'] = $meta;
+                }
             }
         }
 
-        if (env('APP_DEBUG') && $this instanceof ShowsTrace) {
-            $return['trace'] = \Symfony\Component\ErrorHandler\Exception\FlattenException::createFromThrowable($e)->getTrace();
+        if (env('ShowExceptionTrace', false)) {
+            if ($this instanceof ShowsTrace) {
+                $return['trace'] = \Symfony\Component\ErrorHandler\Exception\FlattenException::createFromThrowable($e)->getTrace();
+            }
         }
 
         return $return;
@@ -103,5 +108,7 @@ abstract class ApiException extends IdException implements Jsonable, \JsonSerial
      *
      * @return mixed
      */
-    public function getMeta() {}
+    public function getMeta()
+    {
+    }
 }

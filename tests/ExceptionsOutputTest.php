@@ -1,4 +1,6 @@
-<?php namespace Lanin\Laravel\ApiExceptions\Tests;
+<?php
+
+namespace Lanin\Laravel\ApiExceptions\Tests;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Lanin\Laravel\ApiExceptions\Support\Request;
@@ -96,7 +98,6 @@ class ExceptionsOutputTest extends TestCase
     public function test_form_request_validation_fail()
     {
         $this->app['router']->post('foo', function (FooRequest $request) {
-
         });
 
         $this->json('POST', '/foo', ['foo' => 'bar'])
